@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVICE_NAME="io-scanner"
+SERVICE_NAME="scanner"
 SCRIPT_NAME="scanner.py"
 LOG_FILE="activity.log"
 CONFIG_FILE="exclusions.yaml"
