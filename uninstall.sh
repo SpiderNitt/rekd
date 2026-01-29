@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVICE_NAME="io-scanner"
+SERVICE_NAME="scanner"
 
 if [ "$EUID" -ne 0 ]; then
   echo "❌ Error: Please run as root (sudo ./uninstall.sh)"
