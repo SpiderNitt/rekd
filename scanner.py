@@ -1,12 +1,13 @@
 from bcc import BPF
-import ctypes, time, signal, os, math, shutil
+import ctypes, time, signal, os, math, shutil, sys, argparse
 from collections import defaultdict, deque
 from contextlib import contextmanager
 from rich.live import Live
 from rich.table import Table
 from rich import box
+import yaml 
 
-# ======= CONFIG =======
+# ======= CONFIG DEFAULTS =======
 KERNEL_SIZE_THRESHOLD = 512
 MAX_COPY = 4096
 ENTROPY_THRESHOLD = 7.5
@@ -15,6 +16,42 @@ ENC_CUMULATIVE_GATE = 1 * 1024*1024  # 1 MB cumulative encrypted sampled
 WINDOW_SEC = 3
 FPS = 15
 MAGIC = [b'\x50\x4b\x03\x04', b'\x1f\x8b', b'\x89PNG', b'\xff\xd8\xff']
+DEFAULT_CONFIG_FILE = "exclusions.yaml"
+
+# ======= SAMPLE CONFIG =======
+SAMPLE_YAML = """# Exclusions Configuration
+# Add process names (comm) below to exclude them from the scanner.
+# Note: Linux truncates process names to 16 characters.
+exclusions:
+  - "code"         # VS Code
+  - "slack"        # Slack
+  - "spotify"      # Spotify
+  - "firefox"
+  - "chrome"
+"""
+
+# ======= ARGS & CONFIG LOADER =======
+def parse_args():
+    parser = argparse.ArgumentParser(description="VFS Write Encrypted-IO Scanner")
+    parser.add_argument("--init-config", action="store_true", help="Generate a sample exclusions.yaml file and exit")
+    parser.add_argument("--config", type=str, default=DEFAULT_CONFIG_FILE, help="Path to exclusion config file (YAML)")
+    return parser.parse_args()
+
+def load_exclusions(path):
+    exclusions = set()
+    if not os.path.exists(path):
+        return exclusions
+    
+    try:
+        with open(path, "r") as f:
+            data = yaml.safe_load(f)
+            if data and "exclusions" in data and data["exclusions"]:
+                # specific to linux comm length (16), careful matching
+                exclusions = set(str(x).strip() for x in data["exclusions"])
+                print(f"[*] Loaded {len(exclusions)} exclusions from {path}")
+    except Exception as e:
+        print(f"[!] Error loading config: {e}")
+    return exclusions
 
 # ======= QUIET CONTEXT =======
 @contextmanager
@@ -92,8 +129,11 @@ def entropy(b: bytes) -> float:
     return sum(-(c/l)*math.log2(c/l) for c in freq if c)
 
 def max_rows():
-    h = shutil.get_terminal_size((120, 40)).lines
-    return max(5, h - 8)
+    try:
+        h = shutil.get_terminal_size((120, 40)).lines
+        return max(5, h - 8)
+    except:
+        return 20
 
 # ======= STATE =======
 running = True
@@ -106,12 +146,12 @@ events_per_pid = defaultdict(int)
 comm_per_pid = {}
 lastfile_per_pid = {}
 
-# per-PID cumulative sampled and encrypted sampled totals (user asked)
 sampled_cum_per_pid = defaultdict(int)
 enc_cum_per_pid = defaultdict(int)
-
-# per-PID recent buckets (time bucketing per PID kept for future rate work)
 buckets = defaultdict(lambda: deque(maxlen=WINDOW_SEC))
+
+# Global exclusions
+EXCLUDED_COMMS = set()
 
 # ======= SIGNALS =======
 def _stop(*_): 
@@ -124,9 +164,16 @@ signal.signal(signal.SIGTERM, _stop)
 def handle(_, data, __):
     global events_total, bytes_total
     e = ctypes.cast(data, ctypes.POINTER(Event)).contents
+    
+    # 1. Decode comm immediately to filter
+    comm = e.comm.decode("utf-8", "replace").rstrip("\x00")
+    
+    # 2. Check Exclusions
+    if comm in EXCLUDED_COMMS:
+        return
+
     pid = e.pid
     sz = e.size
-    comm = e.comm.decode("utf-8", "replace").rstrip("\x00")
     fname = e.fname.decode("utf-8", "replace").rstrip("\x00")
 
     events_total += 1
@@ -145,7 +192,6 @@ def handle(_, data, __):
         is_enc = ent >= ENTROPY_THRESHOLD
         if is_enc:
             enc_cum_per_pid[pid] += e.copied
-        # time bucket for PID (timestamp, bytes, enc_flag)
         buckets[pid].append((time.time(), e.copied, is_enc))
 
 # ======= UI (Rich) =======
@@ -158,9 +204,21 @@ def render_table():
     t.add_column("Enc %", justify="right")
     t.add_column("Last File", justify="left")
 
-    # sort by cumulative encrypted sampled bytes descending, then total bytes
     rows = sorted(bytes_per_pid.keys(), key=lambda p: (enc_cum_per_pid[p], bytes_per_pid[p]), reverse=True)
-    for pid in rows[:max_rows()]:
+    
+    # Check if PID is now active (sometimes PIDs die but stay in memory)
+    # We just render what we have.
+    
+    count = 0
+    limit = max_rows()
+    
+    for pid in rows:
+        if count >= limit: break
+        
+        # Double check exclusion in case it was added later (optional, but good for dynamic reloading)
+        if comm_per_pid.get(pid) in EXCLUDED_COMMS:
+            continue
+
         total_mb = bytes_per_pid[pid] / 1e6
         enc_mb = enc_cum_per_pid[pid] / 1e6
         sampled = sampled_cum_per_pid[pid]
@@ -176,6 +234,7 @@ def render_table():
             lastfile_per_pid.get(pid, "-"),
             style=style
         )
+        count += 1
 
     rt = time.time() - start_time
     t.caption = f"events={events_total}  bytes={bytes_total/1e6:.1f}MB  runtime={rt:.1f}s"
@@ -183,6 +242,20 @@ def render_table():
 
 # ======= MAIN =======
 if __name__ == "__main__":
+    # 1. Parse Args
+    args = parse_args()
+
+    # 2. Handle --init-config
+    if args.init_config:
+        with open("exclusions.yaml", "w") as f:
+            f.write(SAMPLE_YAML)
+        print("[+] Generated sample configuration: exclusions.yaml")
+        print("[+] Add process names to this file to exclude them.")
+        sys.exit(0)
+
+    # 3. Load Config
+    EXCLUDED_COMMS = load_exclusions(args.config)
+
     print("[*] Loading BPF (quiet)...")
     with quiet():
         b = BPF(text=bpf_text, cflags=[
@@ -190,15 +263,20 @@ if __name__ == "__main__":
             "-Wno-macro-redefined",
             "-Wno-address-of-packed-member"
         ])
-    # set kernel threshold
+    
     b["thr"][ctypes.c_uint(0)] = ctypes.c_uint(KERNEL_SIZE_THRESHOLD)
     b["events"].open_ring_buffer(handle)
 
-    print("[*] Running (Ctrl+C to stop)")
-    with Live(render_table(), refresh_per_second=FPS) as live:
-        while running:
-            try:
-                b.ring_buffer_poll(timeout=100)
-            except Exception:
-                pass
-            live.update(render_table())
+    print(f"[*] Running. Config: {args.config} (Ctrl+C to stop)")
+    
+    try:
+        with Live(render_table(), refresh_per_second=FPS) as live:
+            while running:
+                try:
+                    b.ring_buffer_poll(timeout=100)
+                except Exception:
+                    pass
+                live.update(render_table())
+    except KeyboardInterrupt:
+        pass
+    print("\n[*] Exiting.")
