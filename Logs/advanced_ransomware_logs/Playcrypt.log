@@ -1,0 +1,98 @@
+1986  14:51:58.963643 execve("./7a55c8391fda90a5d4653fdebe2d685edb662859937e14b6756f45e29b76901d.elf", ["./7a55c8391fda90a5d4653fdebe2d685edb662859937e14b6756f45e29b76901d.elf"], 0x7ffc1cf54ae8 /* 23 vars */) = 0
+1986  14:51:58.964345 brk(NULL)         = 0x5befac890000
+1986  14:51:58.964743 arch_prctl(0x3001 /* ARCH_??? */, 0x7ffd1a15c870) = -1 EINVAL (Invalid argument)
+1986  14:51:58.964927 mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x72bc62ea8000
+1986  14:51:58.965020 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+1986  14:51:58.965115 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+1986  14:51:58.965500 newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=24340, ...}, AT_EMPTY_PATH) = 0
+1986  14:51:58.965727 mmap(NULL, 24340, PROT_READ, MAP_PRIVATE, 3</etc/ld.so.cache>, 0) = 0x72bc62ea2000
+1986  14:51:58.965854 close(3</etc/ld.so.cache>) = 0
+1986  14:51:58.965935 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libpthread.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libpthread.so.0>
+1986  14:51:58.966031 read(3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\210J\0\0\0\0\0\0\0\0\0\0@\08\0\v\0@\0%\0$\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\250\n\0\0\0\0\0\0\250\n\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\20\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\20\0\0\0\0\0\0\25\1\0\0\0\0\0\0\25\1\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0 \0\0\0\0\0\0\0 \0\0\0\0\0\0"..., 832) = 832
+1986  14:51:58.966111 newfstatat(3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, "", {st_mode=S_IFREG|0644, st_size=21448, ...}, AT_EMPTY_PATH) = 0
+1986  14:51:58.966294 mmap(NULL, 16424, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, 0) = 0x72bc62e9d000
+1986  14:51:58.966395 mmap(0x72bc62e9e000, 4096, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, 0x1000) = 0x72bc62e9e000
+1986  14:51:58.966664 mmap(0x72bc62e9f000, 4096, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, 0x2000) = 0x72bc62e9f000
+1986  14:51:58.966914 mmap(0x72bc62ea0000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, 0x2000) = 0x72bc62ea0000
+1986  14:51:58.967043 close(3</usr/lib/x86_64-linux-gnu/libpthread.so.0>) = 0
+1986  14:51:58.967129 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libstdc++.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30>
+1986  14:51:58.967234 read(3</usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30>, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\310t\"\0\0\0\0\0\0\0\0\0@\08\0\f\0@\0\"\0!\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0@\221\t\0\0\0\0\0@\221\t\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\240\t\0\0\0\0\0\0\240\t\0\0\0\0\0\0\240\t\0\0\0\0\0\321\17\21\0\0\0\0\0\321\17\21\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\260\32\0\0\0\0\0\0\260\32\0\0\0\0\0"..., 832) = 832
+1986  14:51:58.967315 newfstatat(3</usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30>, "", {st_mode=S_IFREG|0644, st_size=2260296, ...}, AT_EMPTY_PATH) = 0
+1986  14:51:58.967396 mmap(NULL, 2275520, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30>, 0) = 0x72bc62c00000
+1986  14:51:58.967685 mprotect(0x72bc62c9a000, 1576960, PROT_NONE) = 0
+1986  14:51:58.967864 mmap(0x72bc62c9a000, 1118208, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30>, 0x9a000) = 0x72bc62c9a000
+1986  14:51:58.967976 mmap(0x72bc62dab000, 454656, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30>, 0x1ab000) = 0x72bc62dab000
+1986  14:51:58.968065 mmap(0x72bc62e1b000, 57344, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30>, 0x21a000) = 0x72bc62e1b000
+1986  14:51:58.968315 mmap(0x72bc62e29000, 10432, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x72bc62e29000
+1986  14:51:58.968485 close(3</usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30>) = 0
+1986  14:51:58.968870 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
+1986  14:51:58.968994 read(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\237\2\0\0\0\0\0@\0\0\0\0\0\0\0\360\320!\0\0\0\0\0\0\0\0\0@\08\0\16\0@\0B\0A\0\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\20\3\0\0\0\0\0\0\20\3\0\0\0\0\0\0\10\0\0\0\0\0\0\0\3\0\0\0\4\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0\34\0\0\0\0\0\0\0\34\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1986  14:51:58.969073 pread64(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\20\3\0\0\0\0\0\0\20\3\0\0\0\0\0\0\10\0\0\0\0\0\0\0\3\0\0\0\4\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0\34\0\0\0\0\0\0\0\34\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\340\177\2\0\0\0\0\0\340\177\2\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\200\2\0\0\0\0\0\0\200\2\0\0\0\0\0\0\200\2\0\0\0\0\0"..., 784, 64) = 784
+1986  14:51:58.969148 pread64(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0\2\200\0\300\4\0\0\0\1\0\0\0\0\0\0\0", 48, 848) = 48
+1986  14:51:58.969634 pread64(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0O{\f\225\\=\201\327\312\301P\32$\230\266\235\35\202\277\347\4\0\0\0\20\0\0\0\1\0\0\0GNU\0\0\0\0\0\3\0\0\0\2\0\0\0\0\0\0\0", 68, 896) = 68
+1986  14:51:58.969767 newfstatat(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=2220400, ...}, AT_EMPTY_PATH) = 0
+1986  14:51:58.969880 pread64(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\20\3\0\0\0\0\0\0\20\3\0\0\0\0\0\0\10\0\0\0\0\0\0\0\3\0\0\0\4\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0\34\0\0\0\0\0\0\0\34\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\340\177\2\0\0\0\0\0\340\177\2\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\200\2\0\0\0\0\0\0\200\2\0\0\0\0\0\0\200\2\0\0\0\0\0"..., 784, 64) = 784
+1986  14:51:58.969958 mmap(NULL, 2264656, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libc.so.6>, 0) = 0x72bc62800000
+1986  14:51:58.970064 mprotect(0x72bc62828000, 2023424, PROT_NONE) = 0
+1986  14:51:58.970157 mmap(0x72bc62828000, 1658880, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libc.so.6>, 0x28000) = 0x72bc62828000
+1986  14:51:58.970389 mmap(0x72bc629bd000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libc.so.6>, 0x1bd000) = 0x72bc629bd000
+1986  14:51:58.970592 mmap(0x72bc62a16000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libc.so.6>, 0x215000) = 0x72bc62a16000
+1986  14:51:58.970713 mmap(0x72bc62a1c000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x72bc62a1c000
+1986  14:51:58.970817 close(3</usr/lib/x86_64-linux-gnu/libc.so.6>) = 0
+1986  14:51:58.971062 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libdl.so.2", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libdl.so.2>
+1986  14:51:58.971207 read(3</usr/lib/x86_64-linux-gnu/libdl.so.2>, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0@\0\0\0\0\0\0\0`1\0\0\0\0\0\0\0\0\0\0@\08\0\v\0@\0\34\0\33\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0x\6\0\0\0\0\0\0x\6\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\20\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\20\0\0\0\0\0\0\25\1\0\0\0\0\0\0\25\1\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0 \0\0\0\0\0\0\0 \0\0\0\0\0\0"..., 832) = 832
+1986  14:51:58.971312 newfstatat(3</usr/lib/x86_64-linux-gnu/libdl.so.2>, "", {st_mode=S_IFREG|0644, st_size=14432, ...}, AT_EMPTY_PATH) = 0
+1986  14:51:58.971586 mmap(NULL, 16424, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libdl.so.2>, 0) = 0x72bc62e98000
+1986  14:51:58.971700 mmap(0x72bc62e99000, 4096, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libdl.so.2>, 0x1000) = 0x72bc62e99000
+1986  14:51:58.971962 mmap(0x72bc62e9a000, 4096, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libdl.so.2>, 0x2000) = 0x72bc62e9a000
+1986  14:51:58.972376 mmap(0x72bc62e9b000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libdl.so.2>, 0x2000) = 0x72bc62e9b000
+1986  14:51:58.972770 close(3</usr/lib/x86_64-linux-gnu/libdl.so.2>) = 0
+1986  14:51:58.972890 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>
+1986  14:51:58.973001 read(3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\360\342\1\0\0\0\0\0\0\0\0\0@\08\0\v\0@\0\35\0\34\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\10-\0\0\0\0\0\0\10-\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0000\0\0\0\0\0\0\0000\0\0\0\0\0\0\0000\0\0\0\0\0\0\25h\1\0\0\0\0\0\25h\1\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\240\1\0\0\0\0\0\0\240\1\0\0\0\0\0"..., 832) = 832
+1986  14:51:58.973178 newfstatat(3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, "", {st_mode=S_IFREG|0644, st_size=125488, ...}, AT_EMPTY_PATH) = 0
+1986  14:51:58.973442 mmap(NULL, 127720, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, 0) = 0x72bc62e78000
+1986  14:51:58.973721 mmap(0x72bc62e7b000, 94208, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, 0x3000) = 0x72bc62e7b000
+1986  14:51:58.974088 mmap(0x72bc62e92000, 16384, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, 0x1a000) = 0x72bc62e92000
+1986  14:51:58.974330 mmap(0x72bc62e96000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, 0x1d000) = 0x72bc62e96000
+1986  14:51:58.974675 close(3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>) = 0
+1986  14:51:58.974860 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libm.so.6>
+1986  14:51:58.975031 read(3</usr/lib/x86_64-linux-gnu/libm.so.6>, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0@\0\0\0\0\0\0\0PR\16\0\0\0\0\0\0\0\0\0@\08\0\v\0@\0\37\0\36\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\340\322\0\0\0\0\0\0\340\322\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\340\0\0\0\0\0\0\0\340\0\0\0\0\0\0\0\340\0\0\0\0\0\0\325\270\7\0\0\0\0\0\325\270\7\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\240\10\0\0\0\0\0\0\240\10\0\0\0\0\0"..., 832) = 832
+1986  14:51:58.975264 newfstatat(3</usr/lib/x86_64-linux-gnu/libm.so.6>, "", {st_mode=S_IFREG|0644, st_size=940560, ...}, AT_EMPTY_PATH) = 0
+1986  14:51:58.975446 mmap(NULL, 942344, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libm.so.6>, 0) = 0x72bc62b19000
+1986  14:51:58.975547 mmap(0x72bc62b27000, 507904, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libm.so.6>, 0xe000) = 0x72bc62b27000
+1986  14:51:58.975877 mmap(0x72bc62ba3000, 372736, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libm.so.6>, 0x8a000) = 0x72bc62ba3000
+1986  14:51:58.976008 mmap(0x72bc62bfe000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libm.so.6>, 0xe4000) = 0x72bc62bfe000
+1986  14:51:58.976516 close(3</usr/lib/x86_64-linux-gnu/libm.so.6>) = 0
+1986  14:51:58.976743 mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x72bc62e76000
+1986  14:51:58.977538 mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x72bc62e73000
+1986  14:51:58.977698 arch_prctl(ARCH_SET_FS, 0x72bc62e73740) = 0
+1986  14:51:58.977768 set_tid_address(0x72bc62e73a10) = 1986
+1986  14:51:58.977956 set_robust_list(0x72bc62e73a20, 24) = 0
+1986  14:51:58.978035 rseq(0x72bc62e740e0, 0x20, 0, 0x53053053) = 0
+1986  14:51:58.978385 mprotect(0x72bc62a16000, 16384, PROT_READ) = 0
+1986  14:51:58.978933 mprotect(0x72bc62bfe000, 4096, PROT_READ) = 0
+1986  14:51:58.979092 mprotect(0x72bc62e96000, 4096, PROT_READ) = 0
+1986  14:51:58.979186 mprotect(0x72bc62e9b000, 4096, PROT_READ) = 0
+1986  14:51:58.980576 mprotect(0x72bc62e1b000, 45056, PROT_READ) = 0
+1986  14:51:58.980972 mprotect(0x72bc62ea0000, 4096, PROT_READ) = 0
+1986  14:51:58.981086 mprotect(0x5bef843bd000, 8192, PROT_READ|PROT_WRITE) = 0
+1986  14:51:58.981168 mprotect(0x5bef843bf000, 49152, PROT_READ|PROT_WRITE|PROT_EXEC) = 0
+1986  14:51:58.981248 mprotect(0x5bef843cb000, 8192, PROT_READ|PROT_WRITE) = 0
+1986  14:51:58.981463 mprotect(0x5bef843d0000, 4636672, PROT_READ|PROT_WRITE|PROT_EXEC) = 0
+1986  14:51:58.981844 mprotect(0x5bef843d0000, 4636672, PROT_READ|PROT_EXEC) = 0
+1986  14:51:58.981956 mprotect(0x5bef843cb000, 8192, PROT_READ) = 0
+1986  14:51:58.982029 mprotect(0x5bef843bf000, 49152, PROT_READ|PROT_EXEC) = 0
+1986  14:51:58.982094 mprotect(0x5bef843bd000, 8192, PROT_READ) = 0
+1986  14:51:58.982192 mprotect(0x72bc62ee2000, 8192, PROT_READ) = 0
+1986  14:51:58.982340 prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+1986  14:51:58.982697 munmap(0x72bc62ea2000, 24340) = 0
+1986  14:51:58.983082 getrandom("\xc5\xab\x99\x36\x6e\x6c\x4a\xb9", 8, GRND_NONBLOCK) = 8
+1986  14:51:58.983528 brk(NULL)         = 0x5befac890000
+1986  14:51:58.983717 brk(0x5befac8b1000) = 0x5befac8b1000
+1986  14:51:58.984765 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/proc/self/status", O_RDONLY) = 3</proc/1986/status>
+1986  14:51:58.985214 newfstatat(3</proc/1986/status>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+1986  14:51:58.985347 read(3</proc/1986/status>, "Name:\t7a55c8391fda90a\nUmask:\t0002\nState:\tR (running)\nTgid:\t1986\nNgid:\t0\nPid:\t1986\nPPid:\t1983\nTracerPid:\t1983\nUid:\t2013201920\t2013201920\t2013201920\t2013201920\nGid:\t2013201920\t2013201920\t2013201920\t2013"..., 1024) = 1024
+1986  14:51:58.986583 close(3</proc/1986/status>) = 0
+1986  14:51:58.987051 getpid()          = 1986
+1986  14:51:58.987174 kill(1986, SIGKILL) = ?
+1986  14:51:58.987675 +++ killed by SIGKILL +++

@@ -1,0 +1,105 @@
+1970  14:51:57.275813 execve("./40da7968b86654b9af30178540a4cacaf1c61476c4fcb95e438697bb5e47854f.elf", ["./40da7968b86654b9af30178540a4cacaf1c61476c4fcb95e438697bb5e47854f.elf"], 0x7ffe6ab962f8 /* 23 vars */) = 0
+1970  14:51:57.276507 brk(NULL)         = 0x62c41a37a000
+1970  14:51:57.276722 arch_prctl(0x3001 /* ARCH_??? */, 0x7fffece44600) = -1 EINVAL (Invalid argument)
+1970  14:51:57.276908 mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7a4dcecf9000
+1970  14:51:57.277006 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+1970  14:51:57.277122 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+1970  14:51:57.277331 newfstatat(3</etc/ld.so.cache>, "", {st_mode=S_IFREG|0644, st_size=24340, ...}, AT_EMPTY_PATH) = 0
+1970  14:51:57.277557 mmap(NULL, 24340, PROT_READ, MAP_PRIVATE, 3</etc/ld.so.cache>, 0) = 0x7a4dcecf3000
+1970  14:51:57.277660 close(3</etc/ld.so.cache>) = 0
+1970  14:51:57.277740 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libdl.so.2", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libdl.so.2>
+1970  14:51:57.277834 read(3</usr/lib/x86_64-linux-gnu/libdl.so.2>, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0@\0\0\0\0\0\0\0`1\0\0\0\0\0\0\0\0\0\0@\08\0\v\0@\0\34\0\33\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0x\6\0\0\0\0\0\0x\6\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\20\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\20\0\0\0\0\0\0\25\1\0\0\0\0\0\0\25\1\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0 \0\0\0\0\0\0\0 \0\0\0\0\0\0"..., 832) = 832
+1970  14:51:57.278032 newfstatat(3</usr/lib/x86_64-linux-gnu/libdl.so.2>, "", {st_mode=S_IFREG|0644, st_size=14432, ...}, AT_EMPTY_PATH) = 0
+1970  14:51:57.278146 mmap(NULL, 16424, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libdl.so.2>, 0) = 0x7a4dcecee000
+1970  14:51:57.278465 mmap(0x7a4dcecef000, 4096, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libdl.so.2>, 0x1000) = 0x7a4dcecef000
+1970  14:51:57.278681 mmap(0x7a4dcecf0000, 4096, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libdl.so.2>, 0x2000) = 0x7a4dcecf0000
+1970  14:51:57.278784 mmap(0x7a4dcecf1000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libdl.so.2>, 0x2000) = 0x7a4dcecf1000
+1970  14:51:57.278893 close(3</usr/lib/x86_64-linux-gnu/libdl.so.2>) = 0
+1970  14:51:57.279255 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/librt.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/librt.so.1>
+1970  14:51:57.279824 read(3</usr/lib/x86_64-linux-gnu/librt.so.1>, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\2101\0\0\0\0\0\0\0\0\0\0@\08\0\v\0@\0\37\0\36\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\10\10\0\0\0\0\0\0\10\10\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\20\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\20\0\0\0\0\0\0\205\2\0\0\0\0\0\0\205\2\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0 \0\0\0\0\0\0\0 \0\0\0\0\0\0"..., 832) = 832
+1970  14:51:57.280899 newfstatat(3</usr/lib/x86_64-linux-gnu/librt.so.1>, "", {st_mode=S_IFREG|0644, st_size=14664, ...}, AT_EMPTY_PATH) = 0
+1970  14:51:57.281019 mmap(NULL, 16440, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/librt.so.1>, 0) = 0x7a4dcece9000
+1970  14:51:57.281366 mmap(0x7a4dcecea000, 4096, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/librt.so.1>, 0x1000) = 0x7a4dcecea000
+1970  14:51:57.281705 mmap(0x7a4dceceb000, 4096, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/librt.so.1>, 0x2000) = 0x7a4dceceb000
+1970  14:51:57.282004 mmap(0x7a4dcecec000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/librt.so.1>, 0x2000) = 0x7a4dcecec000
+1970  14:51:57.282149 close(3</usr/lib/x86_64-linux-gnu/librt.so.1>) = 0
+1970  14:51:57.282464 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libpthread.so.0", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libpthread.so.0>
+1970  14:51:57.282689 read(3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\210J\0\0\0\0\0\0\0\0\0\0@\08\0\v\0@\0%\0$\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\250\n\0\0\0\0\0\0\250\n\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\20\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\20\0\0\0\0\0\0\25\1\0\0\0\0\0\0\25\1\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0 \0\0\0\0\0\0\0 \0\0\0\0\0\0"..., 832) = 832
+1970  14:51:57.282875 newfstatat(3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, "", {st_mode=S_IFREG|0644, st_size=21448, ...}, AT_EMPTY_PATH) = 0
+1970  14:51:57.282993 mmap(NULL, 16424, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, 0) = 0x7a4dcece4000
+1970  14:51:57.283076 mmap(0x7a4dcece5000, 4096, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, 0x1000) = 0x7a4dcece5000
+1970  14:51:57.283364 mmap(0x7a4dcece6000, 4096, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, 0x2000) = 0x7a4dcece6000
+1970  14:51:57.283498 mmap(0x7a4dcece7000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libpthread.so.0>, 0x2000) = 0x7a4dcece7000
+1970  14:51:57.283624 close(3</usr/lib/x86_64-linux-gnu/libpthread.so.0>) = 0
+1970  14:51:57.283717 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>
+1970  14:51:57.283836 read(3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\360\342\1\0\0\0\0\0\0\0\0\0@\08\0\v\0@\0\35\0\34\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\10-\0\0\0\0\0\0\10-\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0000\0\0\0\0\0\0\0000\0\0\0\0\0\0\0000\0\0\0\0\0\0\25h\1\0\0\0\0\0\25h\1\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\240\1\0\0\0\0\0\0\240\1\0\0\0\0\0"..., 832) = 832
+1970  14:51:57.283932 newfstatat(3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, "", {st_mode=S_IFREG|0644, st_size=125488, ...}, AT_EMPTY_PATH) = 0
+1970  14:51:57.284016 mmap(NULL, 127720, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, 0) = 0x7a4dcecc4000
+1970  14:51:57.284101 mmap(0x7a4dcecc7000, 94208, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, 0x3000) = 0x7a4dcecc7000
+1970  14:51:57.284200 mmap(0x7a4dcecde000, 16384, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, 0x1a000) = 0x7a4dcecde000
+1970  14:51:57.284304 mmap(0x7a4dcece2000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>, 0x1d000) = 0x7a4dcece2000
+1970  14:51:57.284615 close(3</usr/lib/x86_64-linux-gnu/libgcc_s.so.1>) = 0
+1970  14:51:57.284704 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
+1970  14:51:57.284805 read(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\237\2\0\0\0\0\0@\0\0\0\0\0\0\0\360\320!\0\0\0\0\0\0\0\0\0@\08\0\16\0@\0B\0A\0\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\20\3\0\0\0\0\0\0\20\3\0\0\0\0\0\0\10\0\0\0\0\0\0\0\3\0\0\0\4\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0\34\0\0\0\0\0\0\0\34\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+1970  14:51:57.284883 pread64(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\20\3\0\0\0\0\0\0\20\3\0\0\0\0\0\0\10\0\0\0\0\0\0\0\3\0\0\0\4\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0\34\0\0\0\0\0\0\0\34\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\340\177\2\0\0\0\0\0\340\177\2\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\200\2\0\0\0\0\0\0\200\2\0\0\0\0\0\0\200\2\0\0\0\0\0"..., 784, 64) = 784
+1970  14:51:57.284977 pread64(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0\2\200\0\300\4\0\0\0\1\0\0\0\0\0\0\0", 48, 848) = 48
+1970  14:51:57.285049 pread64(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0O{\f\225\\=\201\327\312\301P\32$\230\266\235\35\202\277\347\4\0\0\0\20\0\0\0\1\0\0\0GNU\0\0\0\0\0\3\0\0\0\2\0\0\0\0\0\0\0", 68, 896) = 68
+1970  14:51:57.285127 newfstatat(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "", {st_mode=S_IFREG|0755, st_size=2220400, ...}, AT_EMPTY_PATH) = 0
+1970  14:51:57.285209 pread64(3</usr/lib/x86_64-linux-gnu/libc.so.6>, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0\20\3\0\0\0\0\0\0\20\3\0\0\0\0\0\0\10\0\0\0\0\0\0\0\3\0\0\0\4\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0000>\36\0\0\0\0\0\34\0\0\0\0\0\0\0\34\0\0\0\0\0\0\0\20\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\340\177\2\0\0\0\0\0\340\177\2\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\200\2\0\0\0\0\0\0\200\2\0\0\0\0\0\0\200\2\0\0\0\0\0"..., 784, 64) = 784
+1970  14:51:57.285299 mmap(NULL, 2264656, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libc.so.6>, 0) = 0x7a4dcea00000
+1970  14:51:57.285388 mprotect(0x7a4dcea28000, 2023424, PROT_NONE) = 0
+1970  14:51:57.285502 mmap(0x7a4dcea28000, 1658880, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libc.so.6>, 0x28000) = 0x7a4dcea28000
+1970  14:51:57.285591 mmap(0x7a4dcebbd000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libc.so.6>, 0x1bd000) = 0x7a4dcebbd000
+1970  14:51:57.285680 mmap(0x7a4dcec16000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libc.so.6>, 0x215000) = 0x7a4dcec16000
+1970  14:51:57.285779 mmap(0x7a4dcec1c000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7a4dcec1c000
+1970  14:51:57.285889 close(3</usr/lib/x86_64-linux-gnu/libc.so.6>) = 0
+1970  14:51:57.286065 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/lib/x86_64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libm.so.6>
+1970  14:51:57.286211 read(3</usr/lib/x86_64-linux-gnu/libm.so.6>, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0@\0\0\0\0\0\0\0PR\16\0\0\0\0\0\0\0\0\0@\08\0\v\0@\0\37\0\36\0\1\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\340\322\0\0\0\0\0\0\340\322\0\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\5\0\0\0\0\340\0\0\0\0\0\0\0\340\0\0\0\0\0\0\0\340\0\0\0\0\0\0\325\270\7\0\0\0\0\0\325\270\7\0\0\0\0\0\0\20\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\240\10\0\0\0\0\0\0\240\10\0\0\0\0\0"..., 832) = 832
+1970  14:51:57.286305 newfstatat(3</usr/lib/x86_64-linux-gnu/libm.so.6>, "", {st_mode=S_IFREG|0644, st_size=940560, ...}, AT_EMPTY_PATH) = 0
+1970  14:51:57.286391 mmap(NULL, 942344, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libm.so.6>, 0) = 0x7a4dce919000
+1970  14:51:57.286583 mmap(0x7a4dce927000, 507904, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libm.so.6>, 0xe000) = 0x7a4dce927000
+1970  14:51:57.286683 mmap(0x7a4dce9a3000, 372736, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libm.so.6>, 0x8a000) = 0x7a4dce9a3000
+1970  14:51:57.286771 mmap(0x7a4dce9fe000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3</usr/lib/x86_64-linux-gnu/libm.so.6>, 0xe4000) = 0x7a4dce9fe000
+1970  14:51:57.286970 close(3</usr/lib/x86_64-linux-gnu/libm.so.6>) = 0
+1970  14:51:57.287107 mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7a4dcecc2000
+1970  14:51:57.287244 mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7a4dcecbf000
+1970  14:51:57.287332 arch_prctl(ARCH_SET_FS, 0x7a4dcecbf840) = 0
+1970  14:51:57.287394 set_tid_address(0x7a4dcecbfb10) = 1970
+1970  14:51:57.287550 set_robust_list(0x7a4dcecbfb20, 24) = 0
+1970  14:51:57.287633 rseq(0x7a4dcecc01e0, 0x20, 0, 0x53053053) = 0
+1970  14:51:57.287850 mprotect(0x7a4dcec16000, 16384, PROT_READ) = 0
+1970  14:51:57.287965 mprotect(0x7a4dce9fe000, 4096, PROT_READ) = 0
+1970  14:51:57.288051 mprotect(0x7a4dcece2000, 4096, PROT_READ) = 0
+1970  14:51:57.288129 mprotect(0x7a4dcece7000, 4096, PROT_READ) = 0
+1970  14:51:57.288203 mprotect(0x7a4dcecec000, 4096, PROT_READ) = 0
+1970  14:51:57.288680 mprotect(0x7a4dcecf1000, 4096, PROT_READ) = 0
+1970  14:51:57.289161 mprotect(0x62c3fbbe5000, 65536, PROT_READ) = 0
+1970  14:51:57.289527 mprotect(0x7a4dced33000, 8192, PROT_READ) = 0
+1970  14:51:57.289696 prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+1970  14:51:57.289814 munmap(0x7a4dcecf3000, 24340) = 0
+1970  14:51:57.290043 rt_sigaction(SIGPIPE, {sa_handler=SIG_IGN, sa_mask=[PIPE], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7a4dcea42520}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1970  14:51:57.290156 getrandom("\xe1\x2e\x29\x49\x15\x7e\x0b\x93", 8, GRND_NONBLOCK) = 8
+1970  14:51:57.290376 brk(NULL)         = 0x62c41a37a000
+1970  14:51:57.290467 brk(0x62c41a39b000) = 0x62c41a39b000
+1970  14:51:57.290580 openat(AT_FDCWD</home/rogan_rogu_gmail_com/samples/adv_samples>, "/proc/self/maps", O_RDONLY|O_CLOEXEC) = 3</proc/1970/maps>
+1970  14:51:57.290723 prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+1970  14:51:57.290807 newfstatat(3</proc/1970/maps>, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+1970  14:51:57.290901 read(3</proc/1970/maps>, "62c3fb800000-62c3fb9e5000 r-xp 00000000 08:01 803858                     /home/rogan_rogu_gmail_com/samples/adv_samples/40da7968b86654b9af30178540a4cacaf1c61476c4fcb95e438697bb5e47854f.elf\n62c3fbbe500"..., 1024) = 1024
+1970  14:51:57.291033 read(3</proc/1970/maps>, "                       /usr/lib/x86_64-linux-gnu/libm.so.6\n7a4dce9ff000-7a4dcea00000 rw-p 000e5000 08:01 3182                       /usr/lib/x86_64-linux-gnu/libm.so.6\n7a4dcea00000-7a4dcea28000 r--p 0"..., 1024) = 1024
+1970  14:51:57.291142 read(3</proc/1970/maps>, "c_s.so.1\n7a4dcecc7000-7a4dcecde000 r-xp 00003000 08:01 3174                       /usr/lib/x86_64-linux-gnu/libgcc_s.so.1\n7a4dcecde000-7a4dcece2000 r--p 0001a000 08:01 3174                       /usr/"..., 1024) = 1024
+1970  14:51:57.291251 read(3</proc/1970/maps>, "thread.so.0\n7a4dcece9000-7a4dcecea000 r--p 00000000 08:01 3193                       /usr/lib/x86_64-linux-gnu/librt.so.1\n7a4dcecea000-7a4dceceb000 r-xp 00001000 08:01 3193                       /usr/"..., 1024) = 1024
+1970  14:51:57.291360 read(3</proc/1970/maps>, "000 rw-p 00003000 08:01 3181                       /usr/lib/x86_64-linux-gnu/libdl.so.2\n7a4dcecf9000-7a4dcecfb000 rw-p 00000000 00:00 0 \n7a4dcecfb000-7a4dcecfd000 r--p 00000000 08:01 3176             "..., 1024) = 1024
+1970  14:51:57.291561 close(3</proc/1970/maps>) = 0
+1970  14:51:57.291721 sched_getaffinity(1970, 32, [0, 1]) = 8
+1970  14:51:57.291838 rt_sigaction(SIGSEGV, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1970  14:51:57.291959 rt_sigaction(SIGSEGV, {sa_handler=0x62c3fb972ac0, sa_mask=[], sa_flags=SA_RESTORER|SA_ONSTACK|SA_SIGINFO, sa_restorer=0x7a4dcea42520}, NULL, 8) = 0
+1970  14:51:57.292063 rt_sigaction(SIGBUS, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+1970  14:51:57.292143 rt_sigaction(SIGBUS, {sa_handler=0x62c3fb972ac0, sa_mask=[], sa_flags=SA_RESTORER|SA_ONSTACK|SA_SIGINFO, sa_restorer=0x7a4dcea42520}, NULL, 8) = 0
+1970  14:51:57.292368 sigaltstack(NULL, {ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=0}) = 0
+1970  14:51:57.292474 mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7a4dcecf6000
+1970  14:51:57.292563 mprotect(0x7a4dcecf6000, 4096, PROT_NONE) = 0
+1970  14:51:57.292648 sigaltstack({ss_sp=0x7a4dcecf7000, ss_flags=0, ss_size=8192}, NULL) = 0
+1970  14:51:57.292813 sigaltstack({ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=8192}, NULL) = 0
+1970  14:51:57.292909 munmap(0x7a4dcecf6000, 12288) = 0
+1970  14:51:57.293027 exit_group(0)     = ?
+1970  14:51:57.293522 +++ exited with 0 +++

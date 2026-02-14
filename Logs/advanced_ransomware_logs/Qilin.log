@@ -1,0 +1,83 @@
+2014  14:52:29.073366 execve("./cd27a31e618fe93df37603e5ece3352a91f27671ee73bdc8ce9ad793cad72a0f.elf", ["./cd27a31e618fe93df37603e5ece3352a91f27671ee73bdc8ce9ad793cad72a0f.elf"], 0x7ffd2ca72d58 /* 23 vars */) = 0
+2014  14:52:29.074064 brk(NULL)         = 0x1547a000
+2014  14:52:29.074154 brk(0x1547a8e0)   = 0x1547a8e0
+2014  14:52:29.074232 arch_prctl(ARCH_SET_FS, 0x1547a020) = 0
+2014  14:52:29.074295 set_tid_address(0x1547a2f0) = 2014
+2014  14:52:29.074354 set_robust_list(0x1547a300, 24) = 0
+2014  14:52:29.074475 rt_sigaction(SIGRTMIN, {sa_handler=0x4e4a69, sa_mask=[], sa_flags=SA_RESTORER|SA_SIGINFO, sa_restorer=0x4d3a71}, NULL, 8) = 0
+2014  14:52:29.074574 rt_sigaction(SIGRT_1, {sa_handler=0x4e49ad, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART|SA_SIGINFO, sa_restorer=0x4d3a71}, NULL, 8) = 0
+2014  14:52:29.074676 rt_sigprocmask(SIG_UNBLOCK, [RTMIN RT_1], NULL, 8) = 0
+2014  14:52:29.074745 getrlimit(RLIMIT_STACK, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+2014  14:52:29.074832 open("/dev/urandom", O_RDONLY) = 3</dev/urandom>
+2014  14:52:29.075055 read(3</dev/urandom>, "s\310\21q\373\2\270\234", 8) = 8
+2014  14:52:29.075134 close(3</dev/urandom>) = 0
+2014  14:52:29.075203 ioctl(0</dev/pts/0>, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+2014  14:52:29.075293 ioctl(1</dev/pts/0>, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+2014  14:52:29.075467 rt_sigaction(SIGINT, {sa_handler=0x401ac0, sa_mask=[INT], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x4d3a71}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+2014  14:52:29.075549 rt_sigaction(SIGTERM, {sa_handler=0x401ac0, sa_mask=[TERM], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x4d3a71}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+2014  14:52:29.075627 brk(0x1547b8e0)   = 0x1547b8e0
+2014  14:52:29.075775 brk(0x1547c000)   = 0x1547c000
+2014  14:52:29.076224 brk(0x1547d000)   = 0x1547d000
+2014  14:52:29.076709 brk(0x1547e000)   = 0x1547e000
+2014  14:52:29.077048 brk(0x1547f000)   = 0x1547f000
+2014  14:52:29.077449 brk(0x15480000)   = 0x15480000
+2014  14:52:29.077700 brk(0x15481000)   = 0x15481000
+2014  14:52:29.077792 brk(0x15482000)   = 0x15482000
+2014  14:52:29.078096 brk(0x15483000)   = 0x15483000
+2014  14:52:29.078276 brk(0x15484000)   = 0x15484000
+2014  14:52:29.078447 brk(0x15485000)   = 0x15485000
+2014  14:52:29.078578 brk(0x15487000)   = 0x15487000
+2014  14:52:29.078850 brk(0x15488000)   = 0x15488000
+2014  14:52:29.079125 brk(0x15489000)   = 0x15489000
+2014  14:52:29.079919 brk(0x1548a000)   = 0x1548a000
+2014  14:52:29.080236 brk(0x1548b000)   = 0x1548b000
+2014  14:52:29.080830 uname({sysname="Linux", nodename="instance-20260121-130438", ...}) = 0
+2014  14:52:29.081109 open("/proc/cpuinfo", O_RDONLY) = 3</proc/cpuinfo>
+2014  14:52:29.081291 ioctl(3</proc/cpuinfo>, TCGETS, 0x7ffc7391a6ac) = -1 ENOTTY (Inappropriate ioctl for device)
+2014  14:52:29.081794 brk(0x1548c000)   = 0x1548c000
+2014  14:52:29.081964 read(3</proc/cpuinfo>, "processor\t: 0\nvendor_id\t: GenuineIntel\ncpu family\t: 6\nmodel\t\t: 79\nmodel name\t: Intel(R) Xeon(R) CPU @ 2.20GHz\nstepping\t: 0\nmicrocode\t: 0xffffffff\ncpu MHz\t\t: 2199.998\ncache size\t: 56320 KB\nphysical id\t"..., 4096) = 2112
+2014  14:52:29.082309 read(3</proc/cpuinfo>, "", 4096) = 0
+2014  14:52:29.082653 close(3</proc/cpuinfo>) = 0
+2014  14:52:29.082802 setrlimit(RLIMIT_NOFILE, {rlim_cur=4*1024, rlim_max=4*1024}) = 0
+2014  14:52:29.082948 write(1</dev/pts/0>, "--- Configuration start ---\n", 28) = 28
+2014  14:52:29.083223 write(1</dev/pts/0>, "VM whitelist: []\n", 17) = 17
+2014  14:52:29.083330 write(1</dev/pts/0>, "Process blacklist: [\"kvm\",\"qemu\",\"xen\"]\n", 40) = 40
+2014  14:52:29.083506 write(1</dev/pts/0>, "Directory blacklist: [\"/boot/\",\"/proc/\",\"/sys/\",\"/run/\",\"/dev/\",\"/lib/\",\"/etc/\",\"/bin/\",\"/mbr/\",\"/lib64/\",\"/vmware/lifecycle/\",\"/vdtc/\",\"/healthd/\"]\n", 149) = 149
+2014  14:52:29.083626 write(1</dev/pts/0>, "File blacklist: [\"initrd\",\"vmlinuz\",\"basemisc.tgz\",\"boot.cfg\",\"bootpart.gz\",\"features.gz\",\"imgdb.tgz\",\"jumpstrt.gz\",\"onetime.tgz\",\"state.tgz\",\"useropts.gz\"]\n", 157) = 157
+2014  14:52:29.084038 write(1</dev/pts/0>, "File extensions blacklist: [\"v00\",\"v01\",\"v02\",\"v03\",\"v04\",\"v05\",\"v06\",\"v07\",\"v08\",\"v09\",\"b00\",\"b01\",\"b02\",\"b03\",\"b04\",\"b05\",\"b06\",\"b07\",\"b08\",\"b09\",\"t00\",\"t01\",\"t02\",\"t03\",\"t04\",\"t05\",\"t06\",\"t07\",\"t08"..., 209) = 209
+2014  14:52:29.084158 write(1</dev/pts/0>, "Directory whitelist: [\"/home\",\"/usr/home\",\"/tmp\",\"/var/www\",\"/usr/local/www\",\"/mnt\",\"/media\",\"/srv\",\"/data\",\"/backup\",\"/var/lib/mysql\",\"/var/mail\",\"/var/spool/mail\",\"/var/vm\",\"/var/lib/vmware\",\"/opt/v"..., 482) = 482
+2014  14:52:29.084359 write(1</dev/pts/0>, "File whitelist: []\n", 19) = 19
+2014  14:52:29.084809 write(1</dev/pts/0>, "File extensions whitelist: [\"3ds\",\"3g2\",\"3gp\",\"7z\",\"aac\",\"abw\",\"ac3\",\"accdb\",\"ai\",\"aif\",\"aiff\",\"amr\",\"apk\",\"app\",\"asf\",\"asx\",\"atom\",\"avi\",\"bak\",\"bat\",\"bmp\",\"bup\",\"bz2\",\"cab\",\"cbr\",\"cbz\",\"cda\",\"cdr\",\"c"..., 1326) = 1326
+2014  14:52:29.085003 write(1</dev/pts/0>, "Encrypted extension: \"gQ_UbazLFd\"\n", 34) = 34
+2014  14:52:29.085118 write(1</dev/pts/0>, "Stepskip mode: \"MULTIPASS\"\n", 27) = 27
+2014  14:52:29.085222 write(1</dev/pts/0>, "--- Configuration end ---\n", 26) = 26
+2014  14:52:29.085670 time(NULL)        = 1770303149 (2026-02-05T14:52:29+0000)
+2014  14:52:29.085897 open("/etc/TZ", O_RDONLY) = -1 ENOENT (No such file or directory)
+2014  14:52:29.086092 open("/etc/localtime", O_RDONLY) = 3</usr/share/zoneinfo/Etc/UTC>
+2014  14:52:29.086242 read(3</usr/share/zoneinfo/Etc/UTC>, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0UTC\0TZif2\0\0\0\0\0\0\0\0\0", 68) = 68
+2014  14:52:29.086531 lseek(3</usr/share/zoneinfo/Etc/UTC>, -68, SEEK_END) = 46
+2014  14:52:29.086746 read(3</usr/share/zoneinfo/Etc/UTC>, "\0\0\0\0UTC\0TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0UTC\0\nUTC0\n", 68) = 68
+2014  14:52:29.086856 close(3</usr/share/zoneinfo/Etc/UTC>) = 0
+2014  14:52:29.086944 time(NULL)        = 1770303149 (2026-02-05T14:52:29+0000)
+2014  14:52:29.087024 open("/etc/TZ", O_RDONLY) = -1 ENOENT (No such file or directory)
+2014  14:52:29.087184 open("/etc/localtime", O_RDONLY) = 3</usr/share/zoneinfo/Etc/UTC>
+2014  14:52:29.087293 read(3</usr/share/zoneinfo/Etc/UTC>, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0UTC\0TZif2\0\0\0\0\0\0\0\0\0", 68) = 68
+2014  14:52:29.087397 lseek(3</usr/share/zoneinfo/Etc/UTC>, -68, SEEK_END) = 46
+2014  14:52:29.087513 read(3</usr/share/zoneinfo/Etc/UTC>, "\0\0\0\0UTC\0TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0UTC\0\nUTC0\n", 68) = 68
+2014  14:52:29.087705 close(3</usr/share/zoneinfo/Etc/UTC>) = 0
+2014  14:52:29.087799 open("/etc/TZ", O_RDONLY) = -1 ENOENT (No such file or directory)
+2014  14:52:29.087893 open("/etc/localtime", O_RDONLY) = 3</usr/share/zoneinfo/Etc/UTC>
+2014  14:52:29.087990 read(3</usr/share/zoneinfo/Etc/UTC>, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0UTC\0TZif2\0\0\0\0\0\0\0\0\0", 68) = 68
+2014  14:52:29.088081 lseek(3</usr/share/zoneinfo/Etc/UTC>, -68, SEEK_END) = 46
+2014  14:52:29.088166 read(3</usr/share/zoneinfo/Etc/UTC>, "\0\0\0\0UTC\0TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0UTC\0\nUTC0\n", 68) = 68
+2014  14:52:29.088255 close(3</usr/share/zoneinfo/Etc/UTC>) = 0
+2014  14:52:29.088349 open("/etc/TZ", O_RDONLY) = -1 ENOENT (No such file or directory)
+2014  14:52:29.088505 open("/etc/localtime", O_RDONLY) = 3</usr/share/zoneinfo/Etc/UTC>
+2014  14:52:29.088622 read(3</usr/share/zoneinfo/Etc/UTC>, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0UTC\0TZif2\0\0\0\0\0\0\0\0\0", 68) = 68
+2014  14:52:29.088727 lseek(3</usr/share/zoneinfo/Etc/UTC>, -68, SEEK_END) = 46
+2014  14:52:29.088824 read(3</usr/share/zoneinfo/Etc/UTC>, "\0\0\0\0UTC\0TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\4\0\0\0\0\0\0UTC\0\nUTC0\n", 68) = 68
+2014  14:52:29.088959 close(3</usr/share/zoneinfo/Etc/UTC>) = 0
+2014  14:52:29.089069 write(2</dev/pts/0>, "[2026-02-05 14:52:29]   FATAL: No path specified! It is mandatory for blacklist mode\n", 85) = 85
+2014  14:52:29.089851 fsync(2</dev/pts/0>) = -1 EINVAL (Invalid argument)
+2014  14:52:29.090686 exit_group(1)     = ?
+2014  14:52:29.091073 +++ exited with 1 +++

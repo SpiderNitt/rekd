@@ -1,0 +1,10 @@
+# Force all text files to use LF (Linux) line endings
+* text=auto eol=lf
+
+# Explicitly set shell scripts and python files to LF
+*.sh text eol=lf
+*.py text eol=lf
+
+# Ensure YAML and Markdown are also handled
+*.yaml text eol=lf
+*.md text eol=lf
