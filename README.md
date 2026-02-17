@@ -1,5 +1,16 @@
 # R.E.K.D: Ransomware Entropy Kernel Detector
-This repo can be used to check and flag ransomware presence in a system , with the help of ebpf technology and utilizes the idea of entropy for calculating whether ransomware or not 
+* This project is an eBPF-based encrypted disk I/O scanner that monitors file write operations at the kernel level. 
+* It hooks into the Linux `vfs\_write` system call to capture real-time write activity on regular files. 
+* The system selectively samples large write buffers to avoid noise from small system writes like logs. 
+* Captured data is analyzed in user space using Shannon entropy to detect potential encryption activity. 
+* High-entropy data is treated as suspicious since encrypted ransomware outputs exhibit randomness. 
+* The scanner maintains per-process statistics such as total written bytes and encrypted write ratio. 
+* A configurable exclusion system allows trusted applications to be ignored during monitoring. 
+* The tool supports both interactive monitoring mode and background daemon mode for continuous protection. 
+* Suspicious processes are flagged based on encrypted write percentage and cumulative encrypted output. 
+* Installation scripts automate deployment as a systemd service for persistent runtime monitoring. 
+
+
 ---
 ## 📦 Installation & Dependencies
 
