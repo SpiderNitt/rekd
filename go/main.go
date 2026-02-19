@@ -1,307 +1,410 @@
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang bpf main.bpf.c -- -I/usr/include/bpf
+
 package main
 
 import (
 	"bytes"
-	"encoding/binary"
-	"flag"
+	"context"
+	"errors"
 	"fmt"
 	"log"
 	"math"
 	"os"
 	"os/signal"
 	"sort"
+	"sync"
 	"syscall"
-	"text/tabwriter"
 	"time"
+	"unsafe"
+
+	"github.com/charmbracelet/bubbles/table"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/cilium/ebpf/link"
 	"github.com/cilium/ebpf/ringbuf"
 	"github.com/cilium/ebpf/rlimit"
-	"gopkg.in/yaml.v3"
 )
 
-// Config Constants
 const (
-	EntropyThreshold  = 7.0
-	EncRatioGate      = 0.7
-	EncCumulativeGate = 1 * 1024 * 1024 // 1MB
+	EntropyThreshold = 7.5
+	MaxCopySize      = 1536
+	NumWorkers       = 4
+	MapGCInterval    = 30 * time.Second
+	MapGCTTL         = 2 * time.Minute
 )
 
-var MagicHeaders = [][]byte{
-	{0x50, 0x4b, 0x03, 0x04}, // Zip
-	{0x1f, 0x8b},             // Gzip
-	{0x89, 0x50, 0x4e, 0x47}, // PNG
-	{0xff, 0xd8, 0xff},       // JPEG
-}
+// --- Logic Types ---
 
-// BPF Event Struct (Must match C struct)
-type Event struct {
-	Pid    uint32
-	Size   uint32
-	Copied uint32
-	Comm   [16]byte
-	Fname  [32]byte
-	Data   [4096]byte
-}
-
-// Stats tracking
 type ProcessStats struct {
 	Comm       string
 	BytesTotal uint64
 	BytesEnc   uint64
 	LastFile   string
+	LastSeen   time.Time
+}
+
+type UpdatePayload struct {
+	Pid   uint32
+	Comm  string
+	Fname string
+	Size  uint32
+	IsEnc bool
 }
 
 var (
-	stats        = make(map[uint32]*ProcessStats)
-	exclusions   = make(map[string]bool)
-	configFile   = "exclusions.yaml"
-	logFile      string
-	daemonMode   bool
-	initConfig   bool
-	csvLogHandle *os.File
+	statsMu    sync.RWMutex
+	stats      = make(map[uint32]*ProcessStats)
+	entropyLUT [MaxCopySize + 1]float64
 )
 
-type Config struct {
-	Exclusions []string `yaml:"exclusions"`
+// --- TUI Types & Styles ---
+
+type viewItem struct {
+	pid      uint32
+	comm     string
+	totalMB  float64
+	encMB    float64
+	ratio    float64
+	lastFile string
 }
 
+type tickMsg time.Time
+
+var (
+	baseStyle = lipgloss.NewStyle().
+			BorderStyle(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("240"))
+
+	titleStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("#FAFAFA")).
+			Background(lipgloss.Color("#7D56F4")).
+			Padding(0, 1).
+			MarginBottom(1)
+
+	statusStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#626262")).
+			Italic(true)
+)
+
+// --- Bubble Tea Model ---
+
+type model struct {
+	table    table.Model
+	pidCount int
+}
+
+func newModel() model {
+	columns := []table.Column{
+		{Title: "PID", Width: 8},
+		{Title: "COMM", Width: 15},
+		{Title: "Total (MB)", Width: 12},
+		{Title: "Enc (MB)", Width: 12},
+		{Title: "Enc %", Width: 8},
+		{Title: "Last File", Width: 35},
+	}
+
+	t := table.New(
+		table.WithColumns(columns),
+		table.WithFocused(true),
+		table.WithHeight(20),
+	)
+
+	s := table.DefaultStyles()
+	s.Header = s.Header.
+		BorderStyle(lipgloss.NormalBorder()).
+		BorderForeground(lipgloss.Color("240")).
+		BorderBottom(true).
+		Bold(false)
+	s.Selected = s.Selected.
+		Foreground(lipgloss.Color("229")).
+		Background(lipgloss.Color("57")).
+		Bold(false)
+	t.SetStyles(s)
+
+	return model{table: t}
+}
+
+func (m model) Init() tea.Cmd {
+	return tick()
+}
+
+func tick() tea.Cmd {
+	return tea.Tick(2*time.Second, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
+}
+
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "q", "ctrl+c":
+			return m, tea.Quit
+		}
+	case tickMsg:
+		statsMu.RLock()
+		m.pidCount = len(stats)
+		items := make([]viewItem, 0, len(stats))
+		for pid, s := range stats {
+			ratio := 0.0
+			if s.BytesTotal > 0 {
+				ratio = float64(s.BytesEnc) / float64(s.BytesTotal)
+			}
+			items = append(items, viewItem{
+				pid:      pid,
+				comm:     s.Comm,
+				totalMB:  float64(s.BytesTotal) / 1e6,
+				encMB:    float64(s.BytesEnc) / 1e6,
+				ratio:    ratio * 100,
+				lastFile: s.LastFile,
+			})
+		}
+		statsMu.RUnlock()
+
+		sort.Slice(items, func(i, j int) bool {
+			return items[i].encMB > items[j].encMB
+		})
+
+		displayLimit := 20
+		if len(items) < displayLimit {
+			displayLimit = len(items)
+		}
+
+		rows := make([]table.Row, 0, displayLimit)
+		for i := 0; i < displayLimit; i++ {
+			it := items[i]
+			rows = append(rows, table.Row{
+				fmt.Sprintf("%d", it.pid),
+				it.comm,
+				fmt.Sprintf("%.2f", it.totalMB),
+				fmt.Sprintf("%.2f", it.encMB),
+				fmt.Sprintf("%.1f%%", it.ratio),
+				it.lastFile,
+			})
+		}
+
+		m.table.SetRows(rows)
+		return m, tick()
+
+	case tea.WindowSizeMsg:
+		m.table.SetWidth(msg.Width)
+		m.table.SetHeight(msg.Height - 10)
+	}
+
+	m.table, cmd = m.table.Update(msg)
+	return m, cmd
+}
+
+func (m model) View() string {
+	return lipgloss.JoinVertical(lipgloss.Left,
+		titleStyle.Render("OPTIMIZED VFS_WRITE SCANNER"),
+		fmt.Sprintf("Active PIDs: %d | Refresh: 2s\n", m.pidCount),
+		baseStyle.Render(m.table.View()),
+		statusStyle.Render("\n Quit • Scroll"),
+	) + "\n"
+}
+
+// --- Main Program Logic ---
+
 func main() {
-	flag.StringVar(&configFile, "config", "exclusions.yaml", "Path to config file")
-	flag.StringVar(&logFile, "log", "", "Path to CSV log file")
-	flag.BoolVar(&daemonMode, "daemon", false, "Run in background/headless mode")
-	flag.BoolVar(&initConfig, "init-config", false, "Generate sample exclusions.yaml")
-	flag.Parse()
+	initLUT()
 
-	if initConfig {
-		generateConfig()
-		return
-	}
-
-	loadConfig()
-
-	// Allow current process to lock memory for eBPF resources.
 	if err := rlimit.RemoveMemlock(); err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to remove memlock: %v", err)
 	}
 
-	// Load pre-compiled BPF program into kernel
 	objs := bpfObjects{}
 	if err := loadBpfObjects(&objs, nil); err != nil {
-		log.Fatalf("loading objects: %v", err)
+		log.Fatalf("Failed loading BPF objects: %v", err)
 	}
 	defer objs.Close()
 
-	// Attach Kprobe
-	kp, err := link.Kprobe("vfs_write", objs.VfsWrite, nil)
+	kp, err := link.AttachTracing(link.TracingOptions{Program: objs.VfsWriteFentry})
 	if err != nil {
-		log.Fatalf("opening kprobe: %v", err)
+		log.Fatalf("Failed to attach fentry: %v", err)
 	}
 	defer kp.Close()
 
-	// Open Ringbuffer
 	rd, err := ringbuf.NewReader(objs.Events)
 	if err != nil {
-		log.Fatalf("opening ringbuf reader: %v", err)
-	}
-	defer rd.Close()
-
-	// Setup logging
-	if logFile != "" {
-		f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			log.Fatalf("Failed to open log file: %v", err)
-		}
-		csvLogHandle = f
-		defer csvLogHandle.Close()
-		csvLogHandle.WriteString("ts,pid,comm,file,size,entropy,is_enc\n")
-		fmt.Printf("[*] Logging to %s\n", logFile)
+		log.Fatalf("Failed to open ringbuf: %v", err)
 	}
 
-	if !daemonMode {
-		fmt.Println("[*] Running (Ctrl+C to stop)...")
-		go uiLoop()
-	} else {
-		fmt.Printf("[*] Daemon started. PID: %d\n", os.Getpid())
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	eventsChan := make(chan []byte, 10000)
+	updatesChan := make(chan UpdatePayload, 10000)
+
+	var wgWorkers sync.WaitGroup
+	var wgAgg sync.WaitGroup
+
+	// Start Aggregator
+	wgAgg.Add(1)
+	go statsAggregator(updatesChan, &wgAgg)
+
+	// Start Workers
+	for i := 0; i < NumWorkers; i++ {
+		wgWorkers.Add(1)
+		go worker(eventsChan, updatesChan, &wgWorkers)
 	}
 
-	// Main Event Loop
-	var event Event
-	for {
-		record, err := rd.Read()
-		if err != nil {
-			if err == ringbuf.ErrClosed {
-				return
+	// Wait for workers to finish, then safely close the updates channel
+	go func() {
+		wgWorkers.Wait()
+		close(updatesChan)
+	}()
+
+	// Ringbuffer Drain Goroutine
+	var wgReader sync.WaitGroup
+	wgReader.Add(1)
+	go func() {
+		defer wgReader.Done()
+		defer close(eventsChan)
+		for {
+			record, err := rd.Read()
+			if err != nil {
+				if errors.Is(err, ringbuf.ErrClosed) {
+					return
+				}
+				continue
 			}
-			log.Printf("read error: %v", err)
+			eventsChan <- record.RawSample
+		}
+	}()
+
+	p := tea.NewProgram(newModel(), tea.WithAltScreen())
+
+	// Graceful Shutdown Coordinator
+	go func() {
+		<-ctx.Done()
+		rd.Close()
+		p.Quit()
+	}()
+
+	if _, err := p.Run(); err != nil {
+		log.Fatalf("Error running TUI: %v", err)
+	}
+
+	stop()
+	wgReader.Wait()
+	wgAgg.Wait()
+}
+
+// --- Logic Helpers ---
+
+func worker(eventsChan <-chan []byte, updatesChan chan<- UpdatePayload, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	expectedSize := int(unsafe.Sizeof(bpfEventT{}))
+
+	for rawData := range eventsChan {
+		if len(rawData) < expectedSize {
 			continue
 		}
 
-		// Parse binary data into struct
-		if err := binary.Read(bytes.NewBuffer(record.RawSample), binary.LittleEndian, &event); err != nil {
-			log.Printf("parsing error: %v", err)
-			continue
+		event := (*bpfEventT)(unsafe.Pointer(&rawData[0]))
+
+		pLen := int(event.Copied)
+		if pLen > MaxCopySize {
+			pLen = MaxCopySize
 		}
 
-		processEvent(&event)
+		// Calculate entropy on the slice
+		ent := calculateFastEntropy(event.Data[:pLen])
+
+		// Pass slices of the int8 arrays to nullTermStr
+		updatesChan <- UpdatePayload{
+			Pid:   event.Pid,
+			Comm:  nullTermStr(event.Comm[:]),
+			Fname: nullTermStr(event.Fname[:]),
+			Size:  event.Size,
+			IsEnc: ent >= EntropyThreshold,
+		}
 	}
 }
 
-func processEvent(e *Event) {
-	comm := nullTermStr(e.Comm[:])
-	
-	if exclusions[comm] {
-		return
-	}
+func statsAggregator(updatesChan <-chan UpdatePayload, wg *sync.WaitGroup) {
+	defer wg.Done()
 
-	fname := nullTermStr(e.Fname[:])
-	payload := e.Data[:e.Copied]
-	
-	ent := calculateEntropy(payload)
-	isEnc := ent >= EntropyThreshold
-	
-	// Write to CSV
-	if csvLogHandle != nil {
-		encInt := 0
-		if isEnc {
-			encInt = 1
-		}
-		line := fmt.Sprintf("%f,%d,%s,%s,%d,%.4f,%d\n", 
-			float64(time.Now().UnixNano())/1e9, e.Pid, comm, fname, e.Size, ent, encInt)
-		csvLogHandle.WriteString(line)
-	}
-
-	// Update Stats
-	if _, ok := stats[e.Pid]; !ok {
-		stats[e.Pid] = &ProcessStats{Comm: comm}
-	}
-	s := stats[e.Pid]
-	s.BytesTotal += uint64(e.Size)
-	s.LastFile = fname
-	if isEnc {
-		s.BytesEnc += uint64(e.Size) // Approximate using total size if chunk is high entropy
-	}
-}
-
-func calculateEntropy(data []byte) float64 {
-	if len(data) == 0 {
-		return 0
-	}
-	
-	// Check magic headers to skip known compressed formats
-	for _, magic := range MagicHeaders {
-		if bytes.HasPrefix(data, magic) {
-			return 0
-		}
-	}
-
-	freq := make(map[byte]float64)
-	for _, b := range data {
-		freq[b]++
-	}
-
-	var ent float64
-	l := float64(len(data))
-	for _, count := range freq {
-		p := count / l
-		ent -= p * math.Log2(p)
-	}
-	return ent
-}
-
-// UI Loop
-func uiLoop() {
-	// Trap SigInt
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-
-	ticker := time.NewTicker(2 * time.Second)
+	ticker := time.NewTicker(MapGCInterval)
 	defer ticker.Stop()
 
 	for {
 		select {
-		case <-c:
-			fmt.Println("\n[*] Stopping...")
-			os.Exit(0)
+		case u, ok := <-updatesChan:
+			if !ok {
+				return
+			}
+			statsMu.Lock()
+			s, ok := stats[u.Pid]
+			if !ok {
+				s = &ProcessStats{Comm: u.Comm}
+				stats[u.Pid] = s
+			}
+			s.BytesTotal += uint64(u.Size)
+			s.LastFile = u.Fname
+			s.LastSeen = time.Now()
+			if u.IsEnc {
+				s.BytesEnc += uint64(u.Size)
+			}
+			statsMu.Unlock()
+
 		case <-ticker.C:
-			renderTable()
+			now := time.Now()
+			statsMu.Lock()
+			for pid, s := range stats {
+				if now.Sub(s.LastSeen) > MapGCTTL {
+					delete(stats, pid)
+				}
+			}
+			statsMu.Unlock()
 		}
 	}
 }
 
-func renderTable() {
-	// Simple TUI replacement for 'rich'
-	fmt.Print("\033[H\033[2J") // Clear screen
-	fmt.Println("=== vfs_write Encrypted IO Scanner ===")
-	
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
-	fmt.Fprintln(w, "PID\tCOMM\tTotal(MB)\tEnc(MB)\tEnc(%)\tLast File")
-	
-	// Sort by Encrypted Bytes
-	type pItem struct {
-		pid uint32
-		s   *ProcessStats
+func calculateFastEntropy(data []byte) float64 {
+	length := len(data)
+	if length == 0 {
+		return 0
 	}
-	var items []pItem
-	for pid, s := range stats {
-		items = append(items, pItem{pid, s})
+	var counts [256]int
+	for _, b := range data {
+		counts[b]++
 	}
-	sort.Slice(items, func(i, j int) bool {
-		return items[i].s.BytesEnc > items[j].s.BytesEnc
-	})
-
-	for _, it := range items {
-		s := it.s
-		ratio := 0.0
-		if s.BytesTotal > 0 {
-			ratio = float64(s.BytesEnc) / float64(s.BytesTotal)
+	var sum float64
+	for _, c := range counts {
+		if c > 0 {
+			sum += entropyLUT[c]
 		}
-		
-		// Highlight logic
-		prefix := ""
-		if ratio >= EncRatioGate && s.BytesEnc >= EncCumulativeGate {
-			prefix = "(!)" // Visual alert
-		}
-
-		fmt.Fprintf(w, "%s%d\t%s\t%.2f\t%.2f\t%.1f\t%s\n", 
-			prefix, it.pid, s.Comm, 
-			float64(s.BytesTotal)/1e6, 
-			float64(s.BytesEnc)/1e6, 
-			ratio*100, 
-			s.LastFile)
 	}
-	w.Flush()
+	fLen := float64(length)
+	return math.Log2(fLen) - (sum / fLen)
 }
 
-// Helpers
-func nullTermStr(b []byte) string {
-	idx := bytes.IndexByte(b, 0)
+func initLUT() {
+	entropyLUT[0] = 0
+	for i := 1; i <= MaxCopySize; i++ {
+		entropyLUT[i] = float64(i) * math.Log2(float64(i))
+	}
+}
+
+// Updated to handle []int8 which bpf2go generates for char arrays
+func nullTermStr(b []int8) string {
+	if len(b) == 0 {
+		return ""
+	}
+	
+	// Safely cast []int8 to []byte using unsafe.Slice
+	// This avoids allocating a new slice or copying if we just want to scan it
+	ptr := unsafe.Pointer(&b[0])
+	asBytes := unsafe.Slice((*byte)(ptr), len(b))
+
+	idx := bytes.IndexByte(asBytes, 0)
 	if idx == -1 {
-		return string(b)
+		return string(asBytes)
 	}
-	return string(b[:idx])
-}
-
-func loadConfig() {
-	if _, err := os.Stat(configFile); os.IsNotExist(err) {
-		return
-	}
-	data, err := os.ReadFile(configFile)
-	if err != nil {
-		log.Printf("Error reading config: %v", err)
-		return
-	}
-	var c Config
-	yaml.Unmarshal(data, &c)
-	for _, ex := range c.Exclusions {
-		exclusions[ex] = true
-	}
-}
-
-func generateConfig() {
-	c := Config{
-		Exclusions: []string{"code", "slack", "spotify", "firefox", "chrome"},
-	}
-	data, _ := yaml.Marshal(&c)
-	os.WriteFile("exclusions.yaml", data, 0644)
-	fmt.Println("[*] Generated exclusions.yaml")
+	return string(asBytes[:idx])
 }

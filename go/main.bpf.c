@@ -4,7 +4,8 @@
 #include <bpf/bpf_tracing.h>
 #include <bpf/bpf_core_read.h>
 
-#define MAX_COPY 4096
+#define MAX_COPY 1536 // 3 chunks of 512 bytes
+#define CHUNK_SIZE 512
 #define FILE_NAME_LEN 32
 #define COMM_LEN 16
 #define KERNEL_SIZE_THRESHOLD 512
@@ -23,11 +24,14 @@ struct event_t {
 struct {
     __uint(type, BPF_MAP_TYPE_RINGBUF);
     __uint(max_entries, 1 << 24); // 16MB buffer
+    __type(value, struct event_t); //  It forces Clang to keep the BTF!
 } events SEC(".maps");
 
-SEC("kprobe/vfs_write")
-int BPF_KPROBE(vfs_write, struct file *f, const char *buf, size_t cnt) {
-    u64 size_arg = (u64)cnt;
+// fentry is fundamentally faster than kprobe because it uses BPF trampolines
+// to patch a direct call, avoiding costly context switches and software breakpoints.
+SEC("fentry/vfs_write")
+int BPF_PROG(vfs_write_fentry, struct file *f, const char *buf, size_t count) {
+    u64 size_arg = (u64)count;
     
     // 1. Threshold filter
     if (size_arg < KERNEL_SIZE_THRESHOLD)
@@ -39,13 +43,13 @@ int BPF_KPROBE(vfs_write, struct file *f, const char *buf, size_t cnt) {
     if ((mode & 0xF000) != 0x8000) 
         return 0;
 
-    // 3. Reserve buffer
+    // 3. Reserve buffer space immediately
     struct event_t *e;
     e = bpf_ringbuf_reserve(&events, sizeof(*e), 0);
     if (!e)
         return 0;
 
-    // 4. Metadata
+    // 4. Gather Metadata
     u64 id = bpf_get_current_pid_tgid();
     e->pid = id >> 32;
     e->size = size_arg;
@@ -53,26 +57,33 @@ int BPF_KPROBE(vfs_write, struct file *f, const char *buf, size_t cnt) {
 
     bpf_get_current_comm(&e->comm, sizeof(e->comm));
 
+    // Safely read the filename using BTF core reads
     struct dentry *d = BPF_CORE_READ(f, f_path.dentry);
     const unsigned char *name_ptr = BPF_CORE_READ(d, d_name.name);
-    bpf_probe_read_str(&e->fname, sizeof(e->fname), name_ptr);
+    bpf_probe_read_kernel_str(&e->fname, sizeof(e->fname), name_ptr);
 
-    // 5. Read Payload - VERIFIER SAFE METHOD
-    u32 n = (u32)size_arg;
-
-    // Logic: Clamp to 4095. 
-    // We use 4095 (0xFFF) instead of 4096 to allow using a clean bitmask.
-    if (n > 4095) {
-        n = 4095;
-    }
-
-    // MANDATORY for Verifier: 'n' must be bitwise-ANDed with a constant 
-    // to prove it cannot be negative or overflow.
-    n &= 0xFFF; 
-
-    // Now 'n' is guaranteed to be [0..4095], which fits in data[4096].
-    long ret = bpf_probe_read_user(&e->data, n, buf);
-    if (ret == 0) {
+    // 5. Scattered Read Payload - VERIFIER SAFE METHOD
+    if (size_arg >= MAX_COPY) {
+        // Start chunk
+        bpf_probe_read_user(&e->data[0], CHUNK_SIZE, buf);
+        
+        // Middle chunk (calculated offset)
+        u64 mid_offset = (size_arg / 2) - (CHUNK_SIZE / 2);
+        bpf_probe_read_user(&e->data[CHUNK_SIZE], CHUNK_SIZE, buf + mid_offset);
+        
+        // End chunk (calculated offset)
+        u64 end_offset = size_arg - CHUNK_SIZE;
+        bpf_probe_read_user(&e->data[CHUNK_SIZE * 2], CHUNK_SIZE, buf + end_offset);
+        
+        e->copied = MAX_COPY;
+    } else {
+        // If the write is between 512 and 1536 bytes, read up to what we safely can
+        u32 n = (u32)size_arg;
+        if (n > MAX_COPY) n = MAX_COPY; 
+        
+        // The verifier requires strict bounding for dynamic read lengths
+        n &= 0x7FF; 
+        bpf_probe_read_user(&e->data[0], n, buf);
         e->copied = n;
     }
 
