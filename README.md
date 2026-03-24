@@ -11,7 +11,7 @@ Ransomware possesses one unavoidable property: it must write highly randomized, 
 ### Minimal Kernel Instrumentation
 Scanning every single syscall is impossible without catastrophically degrading storage throughput. To maintain performance, this engine uses minimal, highly targeted kernel scaffolding:
 
-- **fentry Hooks**: We discarded legacy kprobes (which incur massive context-switch latency via software breakpoints) in favor of fast-entry (`fentry`) BPF trampolines. This provides syncronous, near-zero latency access to the `vfs_write` buffers.
+- **fentry Hooks**: We discarded legacy kprobes (which incur massive context-switch latency via software breakpoints) in favor of fast-entry (`fentry`) BPF trampolines. This provides synchronous, near-zero latency access to the `vfs_write` buffers.
 - **The 512-Byte Choke Point**: The Linux OS generates thousands of micro-writes per second (e.g., SQLite WALs). The engine strictly drops any write smaller than 512 bytes inside the kernel. Furthermore, it applies a bitwise mask (`0x8000`) to the inode `i_mode` to ensure it only tracks explicit writes to regular files (ignoring sockets and pipes).
 - **Scattered Read Extraction**: To bypass strict eBPF verifier memory limits without missing critical data, the engine applies a **Scattered Read** strategy with a 1536-byte max limit. For massive writes, it captures three targeted 512-byte chunks (the header, the midpoint, and the footer) to construct a holistic representation of the payload.
 

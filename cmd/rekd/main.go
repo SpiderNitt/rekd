@@ -42,6 +42,7 @@ type ProcessStats struct {
 	BytesEnc   uint64
 	LastFile   string
 	LastSeen   time.Time
+	Alerted    bool
 }
 
 type UpdatePayload struct {
@@ -282,6 +283,10 @@ func main() {
 
 	if daemonMode {
 		fmt.Println("[*] Running in daemon mode. Press Ctrl+C to stop.")
+		go func() {
+			<-ctx.Done()
+			rd.Close()
+		}()
 		<-ctx.Done()
 	} else {
 		p := tea.NewProgram(newModel(), tea.WithAltScreen())
@@ -298,7 +303,6 @@ func main() {
 		}
 	}
 
-	stop()
 	wgReader.Wait()
 	wgAgg.Wait()
 }
@@ -357,10 +361,17 @@ func statsAggregator(updatesChan <-chan UpdatePayload, wg *sync.WaitGroup) {
 			s.BytesTotal += uint64(u.Size)
 			s.LastFile = u.Fname
 			s.LastSeen = time.Now()
+
 			if u.IsEnc {
 				s.BytesEnc += uint64(u.Size)
-				if daemonMode && s.BytesEnc > 1e6 { // Log if encrypted writes exceed 1MB in daemon mode
-					log.Printf("[!] High Entropy Write Detected: PID=%d COMM=%s FILE=%s\n", u.Pid, u.Comm, u.Fname)
+			}
+
+			// Alerting Gate: 1MB Cumulative and 70% High-Entropy Ratio
+			if daemonMode && !s.Alerted && s.BytesEnc > 1e6 {
+				ratio := float64(s.BytesEnc) / float64(s.BytesTotal)
+				if ratio >= 0.70 { // 70% ENC_RATIO_GATE
+					log.Printf("[!] High Entropy Write Detected (Ratio: %.1f%%): PID=%d COMM=%s FILE=%s\n", ratio*100, u.Pid, u.Comm, u.Fname)
+					s.Alerted = true
 				}
 			}
 			statsMu.Unlock()
