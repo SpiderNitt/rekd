@@ -2,3 +2,4 @@
 *.yaml
 *.o
 *.bpf.o
+thekey.key
