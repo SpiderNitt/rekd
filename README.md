@@ -1,6 +1,6 @@
-# Rekd (eBPF Ransomware Scanner)
+# Rekd (Ransomware Encryption Kernel Detector)
 
-Rekd (formerly ebpf-ransom-watch) is a high-performance, kernel-level ransomware detection engine. It utilizes eBPF technology to hook the Virtual File System (VFS) layer, calculating the mathematical randomness (Shannon Entropy) of data being written to disk to catch ransomware in real-time.
+Rekd is a high-performance, kernel-level ransomware detection engine. It utilizes eBPF technology to hook the Virtual File System (VFS) layer, calculating the mathematical randomness (Shannon Entropy) of data being written to disk to catch ransomware in real-time.
 
 ---
 
