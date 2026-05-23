@@ -11,6 +11,8 @@ import (
 	"os"
 	"os/signal"
 	"sort"
+	"strconv"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -209,12 +211,66 @@ func (m model) View() string {
 	) + "\n"
 }
 
+// --- Prerequisites ---
+
+func checkPrerequisites() {
+	if os.Geteuid() != 0 {
+		fmt.Fprintln(os.Stderr, "Error: rekd must run as root.")
+		fmt.Fprintln(os.Stderr, "  Try: sudo rekd")
+		os.Exit(1)
+	}
+
+	if data, err := os.ReadFile("/proc/sys/kernel/osrelease"); err == nil {
+		release := strings.TrimSpace(string(data))
+		if major, minor, err := parseKernelVersion(release); err == nil {
+			if major < 5 || (major == 5 && minor < 8) {
+				fmt.Fprintf(os.Stderr, "Error: kernel %d.%d is too old.\n", major, minor)
+				fmt.Fprintln(os.Stderr, "  rekd requires Linux >= 5.8 (BPF ring buffer + fentry trampolines).")
+				fmt.Fprintln(os.Stderr, "  Compatible distros: Ubuntu 20.10+, Fedora 31+, Debian 12+, Arch (rolling).")
+				os.Exit(1)
+			}
+		}
+	}
+
+	if _, err := os.Stat("/sys/kernel/btf/vmlinux"); err != nil {
+		fmt.Fprintln(os.Stderr, "Error: kernel BTF not available (/sys/kernel/btf/vmlinux missing).")
+		fmt.Fprintln(os.Stderr, "  rekd is a CO-RE binary and requires CONFIG_DEBUG_INFO_BTF=y.")
+		fmt.Fprintln(os.Stderr, "  Enabled by default on Ubuntu 20.10+, Fedora 31+, Debian 12+, RHEL 9+, Arch.")
+		fmt.Fprintln(os.Stderr, "  To check: grep CONFIG_DEBUG_INFO_BTF /boot/config-$(uname -r)")
+		os.Exit(1)
+	}
+}
+
+func parseKernelVersion(release string) (major, minor int, err error) {
+	parts := strings.SplitN(release, ".", 3)
+	if len(parts) < 2 {
+		return 0, 0, fmt.Errorf("unexpected format: %q", release)
+	}
+	major, err = strconv.Atoi(parts[0])
+	if err != nil {
+		return 0, 0, fmt.Errorf("invalid major in %q", release)
+	}
+	minorStr := parts[1]
+	for i, c := range minorStr {
+		if c < '0' || c > '9' {
+			minorStr = minorStr[:i]
+			break
+		}
+	}
+	minor, err = strconv.Atoi(minorStr)
+	if err != nil {
+		return 0, 0, fmt.Errorf("invalid minor in %q", release)
+	}
+	return major, minor, nil
+}
+
 // --- Main Program Logic ---
 
 func main() {
 	flag.BoolVar(&daemonMode, "daemon", false, "Run in background mode (no TUI)")
 	flag.Parse()
 
+	checkPrerequisites()
 	initLUT()
 
 	if err := rlimit.RemoveMemlock(); err != nil {
@@ -223,13 +279,13 @@ func main() {
 
 	objs := bpf.BpfObjects{}
 	if err := bpf.LoadBpfObjects(&objs, nil); err != nil {
-		log.Fatalf("Failed loading BPF objects: %v", err)
+		log.Fatalf("Failed loading BPF objects: %v\n  Hint: verify fentry support with 'bpftool prog load' or check dmesg", err)
 	}
 	defer objs.Close()
 
 	kp, err := link.AttachTracing(link.TracingOptions{Program: objs.VfsWriteFentry})
 	if err != nil {
-		log.Fatalf("Failed to attach fentry: %v", err)
+		log.Fatalf("Failed to attach fentry on vfs_write: %v\n  Hint: requires CONFIG_FPROBE=y and kernel BTF for vfs_write", err)
 	}
 	defer kp.Close()
 
