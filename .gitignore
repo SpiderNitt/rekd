@@ -1,2 +1,10 @@
 *.log
 *.yaml
+*.o
+*.bpf.o
+# BPF skeleton objects must be committed — they are embedded in the binary.
+# Without them, `go build` fails for anyone who doesn't have clang/libbpf-dev.
+!internal/bpf/bpf_bpf*.o
+thekey.key
+/rekd
+
